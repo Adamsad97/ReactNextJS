@@ -1,5 +1,19 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Installation de dépendance
+
+npm install
+
+## Demarrage mode dev
+
+npm run dev
+
+## Demarrage mode prod
+
+npm run build
+puis
+npm start
+
 ## Getting Started
 
 First, run the development server:
@@ -14,23 +28,26 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# Ma BD
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+│ https://create-db.prisma.io/claim?projectID=proj_cmotzj1jy0dh0yhdxtmbgtepi&utm_source=create-db&utm_medium=cli
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Connexion
 
-## Learn More
+postgres://788c2c12047bea92dad31404b97cd6050c56dfa3c6ea02f988725d08b410cb51:sk_ZMZOuDFRnCJ4IBm1Y9QBC@db.prisma.io:5432/postgres?sslmode=require
 
-To learn more about Next.js, take a look at the following resources:
+## .env à la racine du projet
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+DATABASE_URL= postgres://6f362fc1a63c24187be7f8bed14446f2cbc0ce214ac58cd0a0402a10a0fd30ae:sk_re_LxHyQNS9RFVNdt6FTH@db.prisma.io:5432/postgres?sslmode=require
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+JWT_SECRET="d6840975b83db1c3cc4451555aa1ba77d3076f02a148c4c3d5a9a492314b1c48b0b522dbed8d81663b71effa69f288775c5c377c554f45815510208c8cb95173"
 
-## Deploy on Vercel
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+npm install dotenv
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. npx prisma init // Afaire que lorsque l'on n'a prisma déjà installé
+2. npx create-db
+3. npx prisma migrate dev --name init
+4. npx prisma generate
+# ReactNextJS
