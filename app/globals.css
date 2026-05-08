@@ -1,26 +1,388 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer components {
+  .card {
+    @apply flex w-full flex-col gap-3 rounded-3xl border border-black/5 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-zinc-950;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  .card-label {
+    @apply text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500 dark:text-zinc-400;
+  }
+
+  .card-title {
+    @apply text-3xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50;
+  }
+
+  .card-description {
+    @apply max-w-2xl text-sm leading-6 text-zinc-600 dark:text-zinc-400;
+  }
+
+  .card-loading {
+    @apply flex w-full items-center justify-center rounded-3xl border border-black/5 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-zinc-950;
+  }
+
+  /* Navbar and nav utilities */
+  .nav-container {
+    @apply flex flex-wrap items-center gap-2 overflow-x-auto rounded-3xl border border-black/5 bg-zinc-50 p-2 dark:border-white/10 dark:bg-zinc-900/60;
+  }
+
+  .nav-link {
+    @apply rounded-2xl px-4 py-2 text-sm font-medium transition-all duration-200;
+  }
+
+  .nav-link-active {
+    @apply bg-zinc-950 text-white shadow-lg shadow-zinc-950/10 dark:bg-white dark:text-zinc-950;
+  }
+
+  .nav-link-inactive {
+    @apply text-zinc-600 hover:bg-white hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-50;
+  }
+
+  .locale-toggle-group {
+    @apply hidden items-center gap-2 rounded-full border border-black/10 bg-zinc-100 p-1 dark:border-white/10 dark:bg-zinc-900 md:flex;
+  }
+
+  .locale-toggle-group-mobile {
+    @apply flex items-center gap-2 rounded-full border border-black/10 bg-zinc-100 p-1 dark:border-white/10 dark:bg-zinc-900 md:hidden;
+  }
+
+  .locale-button {
+    @apply rounded-full px-3 py-1.5 text-xs font-medium transition-colors;
+  }
+
+  .locale-button-active {
+    @apply bg-zinc-950 text-white dark:bg-white dark:text-zinc-950;
+  }
+
+  .locale-button-inactive {
+    @apply text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50;
+  }
+
+  /* Navbar right section elements */
+  .navbar-user-name {
+    @apply text-sm font-medium text-zinc-700 dark:text-zinc-300;
+  }
+
+  .navbar-divider {
+    @apply h-5 w-px bg-zinc-200 dark:bg-zinc-800;
+  }
+
+  .navbar-logout-btn {
+    @apply text-sm font-medium text-red-600 transition-colors hover:text-red-700 dark:text-red-400 dark:hover:text-red-300;
+  }
+
+  .navbar-lang-group {
+    @apply flex items-center gap-1;
+  }
+
+  .navbar-theme-btn {
+    @apply flex items-center justify-center rounded-full p-2 text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800;
+  }
+
+  /* ========================================
+     NAVBAR - Extracted from navbar.tsx
+     ======================================== */
+  
+  header {
+    @apply sticky top-0 z-50 border-b border-black/5 bg-white/90 backdrop-blur-xl dark:border-white/10 dark:bg-zinc-950/80;
+  }
+
+  header > div {
+    @apply mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8;
+  }
+
+  header > div > div:first-child {
+    @apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between;
+  }
+
+  /* Logo container */
+  header a[href*="/"]:not([href*="settings"]):not([href*="history"]):not([href*="tasks"]) {
+    @apply inline-flex items-center gap-3;
+  }
+
+  /* Logo box with gradient */
+  header a[href*="/"]:not([href*="settings"]):not([href*="history"]):not([href*="tasks"]) > span:first-child {
+    @apply flex h-11 w-11 items-center justify-center rounded-2xl bg-linear-to-br from-zinc-950 to-zinc-700 text-sm font-semibold text-white shadow-lg shadow-zinc-950/10 transition-transform duration-200 dark:from-white dark:to-zinc-300 dark:text-zinc-950;
+  }
+
+  /* Logo text */
+  header a[href*="/"]:not([href*="settings"]):not([href*="history"]):not([href*="tasks"]) > span:last-child {
+    @apply flex flex-col leading-tight;
+  }
+
+  header a > span:last-child > span:first-child {
+    @apply text-xs uppercase tracking-[0.3em] text-zinc-500 dark:text-zinc-400;
+  }
+
+  header a > span:last-child > span:last-child {
+    @apply text-sm font-medium text-zinc-950 dark:text-zinc-50;
+  }
+
+  /* Theme toggle button in navbar */
+  header button:has(svg) {
+    @apply flex items-center justify-center rounded-full border border-black/10 bg-zinc-100 p-2 text-zinc-700 transition-colors hover:bg-zinc-200 dark:border-white/10 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700;
+  }
+
+  header button:has(svg) span {
+    @apply relative flex h-4 w-4 items-center justify-center;
+  }
+
+  /* Page / Hero utilities */
+  .page-center {
+    @apply flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black;
+  }
+
+  .hero-main {
+    @apply flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start;
+  }
+
+  .hero-title {
+    @apply max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50;
+  }
+
+  .hero-para {
+    @apply max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400;
+  }
+
+  .hero-actions {
+    @apply flex flex-col gap-4 text-base font-medium sm:flex-row;
+  }
+
+  .btn-cta {
+    @apply flex h-12 w-full items-center justify-center gap-2 rounded-full bg-zinc-950 px-5 text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-300 md:w-39.5;
+  }
+
+  .btn-outline {
+    @apply flex h-12 w-full items-center justify-center rounded-full border border-black/8 bg-transparent px-5 transition-colors hover:border-transparent hover:bg-black/4 dark:border-white/14 dark:hover:bg-zinc-800 md:w-39.5;
+  }
+
+  /* Auth pages: login and register (styled without changing JSX) */
+  main > div:has(> a[href$="/register"]),
+  main > div:has(> a[href$="/login"]) {
+    @apply mx-auto w-full max-w-md rounded-3xl border border-black/8 bg-white p-6 shadow-xl shadow-zinc-900/5 dark:border-white/12 dark:bg-zinc-950 dark:shadow-black/20 sm:p-8;
+  }
+
+  main > div:has(> a[href$="/register"]) > h1,
+  main > div:has(> a[href$="/login"]) > h1 {
+    @apply mb-6 text-3xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50;
+  }
+
+  main > div:has(> a[href$="/register"]) > form,
+  main > div:has(> a[href$="/login"]) > form {
+    @apply flex flex-col gap-4;
+  }
+
+  main > div:has(> a[href$="/register"]) > form > div,
+  main > div:has(> a[href$="/login"]) > form > div {
+    @apply flex flex-col gap-2;
+  }
+
+  main > div:has(> a[href$="/register"]) label,
+  main > div:has(> a[href$="/login"]) label {
+    @apply text-sm font-medium text-zinc-700 dark:text-zinc-300;
+  }
+
+  main > div:has(> a[href$="/register"]) input,
+  main > div:has(> a[href$="/login"]) input {
+    @apply h-11 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 text-sm text-zinc-950 outline-none transition focus:border-zinc-400 focus:bg-white focus:ring-4 focus:ring-zinc-200/70 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-600 dark:focus:bg-zinc-950 dark:focus:ring-zinc-700/40;
+  }
+
+  main > div:has(> a[href$="/register"]) form > div > p,
+  main > div:has(> a[href$="/login"]) form > div > p {
+    @apply text-xs font-medium text-red-600 dark:text-red-400;
+  }
+
+  main > div:has(> a[href$="/register"]) button[type="submit"],
+  main > div:has(> a[href$="/login"]) button[type="submit"] {
+    @apply mt-2 inline-flex h-11 w-full items-center justify-center rounded-xl bg-zinc-950 px-4 text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-300;
+  }
+
+  main > div:has(> a[href$="/register"]) > a,
+  main > div:has(> a[href$="/login"]) > a {
+    @apply mt-5 inline-block text-sm font-medium text-zinc-600 underline-offset-4 transition hover:text-zinc-950 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100;
+  }
+
+  /* Dashboard Professional Layout */
+  main {
+    @apply flex flex-col gap-8;
+  }
+
+  /* Main Dashboard Container */
+  main > div:first-of-type {
+    @apply flex flex-col gap-6;
+  }
+
+  /* Add Task Button - Professional Style */
+  main > div > button {
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 text-sm font-semibold text-white transition-all duration-200 hover:bg-blue-700 hover:shadow-lg active:scale-95 dark:bg-blue-500 dark:hover:bg-blue-600;
+  }
+
+  /* Task Items Container - Grid Layout */
+  main > div:has(> div > h3) {
+    @apply grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+
+  /* Individual Task Card */
+  main > div > div:has(> h3) {
+    @apply flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700;
+  }
+
+  main > div > div > h3 {
+    @apply text-base font-semibold text-zinc-950 dark:text-zinc-50;
+  }
+
+  main > div > div > p {
+    @apply text-sm text-zinc-600 dark:text-zinc-400;
+  }
+
+  /* Status and Priority Tags */
+  main > div > div > p:nth-of-type(2),
+  main > div > div > p:nth-of-type(3) {
+    @apply inline-block rounded-full px-2.5 py-1 text-xs font-semibold;
+  }
+
+  /* ========================================
+     TASK FORM - Simplified styling
+     ======================================== */
+
+  /* Modal overlay - when form is present */
+  body:has(form:has(textarea)) {
+    @apply overflow-hidden;
+  }
+
+  /* Overlay background */
+  div:has(form:has(textarea)) {
+    @apply fixed inset-0 z-40 grid place-items-center bg-black/50 p-4 backdrop-blur-md dark:bg-black/70;
+  }
+
+  /* Form container */
+  form:has(textarea) {
+    @apply relative z-50 mx-auto w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white shadow-2xl dark:bg-zinc-950;
+  }
+
+  /* Form sections */
+  form:has(textarea) > div {
+    @apply flex flex-col gap-2 px-8 py-6 border-b border-zinc-100 dark:border-zinc-900;
+  }
+
+  form:has(textarea) > div:first-of-type {
+    @apply sticky top-0 z-10 bg-white pb-8 dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800;
+  }
+
+  form:has(textarea) > div:first-of-type input {
+    @apply mt-3 block border-zinc-300 shadow-sm;
+  }
+
+  /* Labels in form */
+  form:has(textarea) label {
+    @apply block text-sm font-semibold text-zinc-800 dark:text-zinc-200 mb-2;
+  }
+
+  form:has(textarea) > div:first-of-type label {
+    @apply text-xs font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-0;
+  }
+
+  /* All inputs and textareas */
+  form:has(textarea) input,
+  form:has(textarea) textarea,
+  form:has(textarea) select {
+    @apply h-11 w-full rounded-xl border-2 border-zinc-200 bg-white px-4 py-2.5 text-sm text-zinc-950 outline-none transition-all shadow-[0_1px_2px_rgba(0,0,0,0.04)] focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-blue-400 dark:focus:ring-blue-900/40;
+  }
+
+  form:has(textarea) textarea {
+    @apply min-h-40 resize-none;
+  }
+
+  /* Error messages */
+  form:has(textarea) p {
+    @apply text-xs font-semibold text-red-600 dark:text-red-400 mt-1;
+  }
+
+  /* Form buttons */
+  form:has(textarea) button {
+    @apply h-12 w-full rounded-none border-t border-zinc-100 px-8 text-sm font-semibold transition-all dark:border-zinc-900;
+  }
+
+  form:has(textarea) button[type="submit"] {
+    @apply bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-600;
+  }
+
+  form:has(textarea) button[type="button"] {
+    @apply border-l border-zinc-100 bg-zinc-50 text-zinc-950 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50;
+  }
+
+  /* ========================================
+     SETTINGS PAGE - Professional Styling
+     ======================================== */
+
+  /* Settings sections - ProfileForm, PasswordForm, LanguageSettings, ThemeSettings */
+  section:has(> p.card-label) > div {
+    @apply space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900;
+  }
+
+  section:has(> p.card-label) h2 {
+    @apply text-lg font-semibold text-zinc-950 dark:text-zinc-50 pb-4 border-b border-zinc-200 dark:border-zinc-800;
+  }
+
+  /* Settings forms - ProfileForm, PasswordForm */
+  section:has(> p.card-label) form {
+    @apply space-y-4;
+  }
+
+  section:has(> p.card-label) form > div {
+    @apply flex flex-col gap-2;
+  }
+
+  section:has(> p.card-label) label {
+    @apply text-sm font-medium text-zinc-700 dark:text-zinc-300;
+  }
+
+  section:has(> p.card-label) input[type="text"],
+  section:has(> p.card-label) input[type="email"],
+  section:has(> p.card-label) input[type="password"] {
+    @apply h-10 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus:border-blue-400 dark:focus:ring-blue-900/30;
+  }
+
+  /* Success/Error messages in settings */
+  section:has(> p.card-label) > div > p:first-of-type[style*="green"] {
+    @apply text-sm font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg px-3 py-2;
+  }
+
+  section:has(> p.card-label) p[style*="red"],
+  section:has(> p.card-label) form > div > p {
+    @apply text-xs font-medium text-red-600 dark:text-red-400;
+  }
+
+  /* Form submit buttons in settings */
+  section:has(> p.card-label) form > button[type="submit"] {
+    @apply mt-4 h-10 rounded-xl bg-blue-600 px-6 text-sm font-semibold text-white transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-blue-500 dark:hover:bg-blue-600;
+  }
+
+  /* Language and Theme buttons container */
+  section:has(> p.card-label) > div:has(> button):not(:has(> form)) {
+    @apply flex flex-wrap gap-3 items-center pt-4;
+  }
+
+  /* Language and Theme toggle buttons */
+  section:has(> p.card-label) > div > button,
+  section:has(> p.card-label) button[type="button"] {
+    @apply h-10 rounded-xl px-4 text-sm font-medium transition-all;
+  }
+
+  /* Active button state */
+  section:has(> p.card-label) > div > button:not(:disabled) {
+    @apply bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600;
+  }
+
+  /* Disabled button state (inactive option) */
+  section:has(> p.card-label) > div > button:disabled {
+    @apply bg-zinc-200 text-zinc-500 cursor-not-allowed dark:bg-zinc-800 dark:text-zinc-400;
+  }
 }

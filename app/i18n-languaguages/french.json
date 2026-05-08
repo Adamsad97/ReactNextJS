@@ -1,0 +1,71 @@
+{
+  "auth": {
+    "login": "Connexion",
+    "register": "Inscription",
+    "email": "Email",
+    "password": "Mot de passe",
+    "name": "Nom",
+    "loginButton": "Se connecter",
+    "registerButton": "S'inscrire",
+    "noAccount": "Pas encore de compte ?",
+    "alreadyAccount": "Déjà un compte ?"
+  },
+  "tasks": {
+    "title": "Mes tâches",
+    "add": "Ajouter une tâche",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "noHistory": "Aucune tâche terminée ou annulée",
+    "noTasks": "Aucune tâche pour le moment",
+    "filters": {
+      "ALL": "Tous"
+    },
+    "form": {
+      "title": "Titre",
+      "description": "Description",
+      "status": "Statut",
+      "priority": "Priorité",
+      "deadline": "Deadline",
+      "create": "Créer la tâche"
+    },
+    "status": {
+      "TODO": "À faire",
+      "IN_PROGRESS": "En cours",
+      "DONE": "Terminé",
+      "CANCELLED": "Annulé"
+    },
+    "priority": {
+      "LOW": "Faible",
+      "MEDIUM": "Moyenne",
+      "HIGH": "Haute",
+      "URGENT": "Urgent"
+    }
+  },
+  "categories": {
+    "title": "Catégories",
+    "add": "Ajouter une catégorie",
+    "noCategories": "Aucune catégorie"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "confirm": "Confirmer",
+    "profile": "Modifier le profil",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "changePassword": "Changer le mot de passe",
+    "saveProfile": "Enregistrer",
+    "change": "Changer"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "tasks": "Tâches",
+    "history": "Historique",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "historyPlaceholder": "L'historique des actions et des changements apparaîtra ici"
+  }
+}

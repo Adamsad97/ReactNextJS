@@ -15,4 +15,7 @@ const eslintConfig = defineConfig([
   ]),
 ]);
 
+export default defineConfig(
+  tseslint.configs.recommended,
+);
 export default eslintConfig;
