@@ -25,3 +25,15 @@ npm run dev
 npm run build
 puis
 npm start
+
+## Démarrage via Docker
+
+docker-compose up -d
+
+## Build
+
+docker compose up --build
+
+## Arrêt des services
+
+docker compose down

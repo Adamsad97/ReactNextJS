@@ -30,7 +30,6 @@ export default async function TasksPage() {
   return (
     <section className="card">
       <p className="card-label">{t("title")}</p>
-      <h1 className="card-title">{t("title")}</h1>
       <TaskFormModal />
       <TaskList initialTasks={tasks} />
     </section>

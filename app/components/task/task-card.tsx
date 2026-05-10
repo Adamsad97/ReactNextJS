@@ -7,6 +7,8 @@ import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Calendar } from "lucide-react";
 import { useLocale } from "next-intl";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 type Task = {
   id: string;
@@ -39,8 +41,28 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
   const translateTasks = useTranslations("tasks");
   const translateCommon = useTranslations("common");
   const locale = useLocale();
-  const [isEditing, setIsEditing] = useState(false);
-  const [editTitle, setEditTitle] = useState(task.title);
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [updatedTitle, setUpdatedTitle] = useState(task.title);
+  const [updatedDescription, setUpdatedDescription] = useState(task.description ?? "");
+  const [updatedPriority, setUpdatedPriority] = useState(task.priority);
+  const [updatedDeadline, setUpdatedDeadline] = useState(
+    task.deadline ? new Date(task.deadline).toISOString().split("T")[0] : ""
+  );
+
+  const {
+    attributes: dragAttributes,
+    listeners: dragListeners,
+    setNodeRef: setDragNodeRef,
+    transform: dragTransform,
+    transition: dragTransition,
+    isDragging,
+  } = useSortable({ id: task.id });
+
+  const dragStyle = {
+    transform: CSS.Transform.toString(dragTransform),
+    transition: dragTransition,
+    opacity: isDragging ? 0.5 : 1,
+  };
 
   const handleDelete = async () => {
     const res = await fetch(`/api/tasks/${task.id}`, {
@@ -51,40 +73,111 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
   };
 
   const handleUpdate = async () => {
+    const updatedTaskData: Task = {
+      ...task,
+      title: updatedTitle,
+      description: updatedDescription,
+      priority: updatedPriority,
+      deadline: updatedDeadline ? new Date(updatedDeadline).toISOString() : undefined,
+    };
+
     const res = await fetch(`/api/tasks/${task.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ ...task, title: editTitle }),
+      body: JSON.stringify(updatedTaskData),
     });
+
     if (res.ok) {
-      updateTask({ ...task, title: editTitle });
-      setIsEditing(false);
+      updateTask(updatedTaskData);
+      setIsEditFormOpen(false);
     }
   };
 
   return (
     <motion.div
+      ref={setDragNodeRef}
+      style={dragStyle}
+      {...dragAttributes}
+      {...dragListeners}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.1 }}
       whileHover={{ scale: 1.02 }}
-      className="card"
+      className="card cursor-grab active:cursor-grabbing"
     >
-      {isEditing ? (
+      {isEditFormOpen ? (
         <div className="flex flex-col gap-3">
-          <input
-            value={editTitle}
-            onChange={(e) => setEditTitle(e.target.value)}
-            className="w-full rounded-xl border border-zinc-200 px-3 py-2 text-sm"
-          />
+          <div>
+            <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+              {translateTasks("form.title")}
+            </label>
+            <input
+              value={updatedTitle}
+              onChange={(changeEvent) => setUpdatedTitle(changeEvent.target.value)}
+              onPointerDown={(pointerEvent) => pointerEvent.stopPropagation()}
+              className="w-full rounded-xl border border-zinc-200 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+              {translateTasks("form.description")}
+            </label>
+            <textarea
+              value={updatedDescription}
+              onChange={(changeEvent) => setUpdatedDescription(changeEvent.target.value)}
+              onPointerDown={(pointerEvent) => pointerEvent.stopPropagation()}
+              className="w-full rounded-xl border border-zinc-200 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+              rows={3}
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+              {translateTasks("form.priority")}
+            </label>
+            <select
+              value={updatedPriority}
+              onChange={(changeEvent) => setUpdatedPriority(changeEvent.target.value)}
+              onPointerDown={(pointerEvent) => pointerEvent.stopPropagation()}
+              className="w-full rounded-xl border border-zinc-200 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+            >
+              <option value="LOW">{translateTasks("priority.LOW")}</option>
+              <option value="MEDIUM">{translateTasks("priority.MEDIUM")}</option>
+              <option value="HIGH">{translateTasks("priority.HIGH")}</option>
+              <option value="URGENT">{translateTasks("priority.URGENT")}</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+              {translateTasks("form.deadline")}
+            </label>
+            <input
+              type="date"
+              value={updatedDeadline}
+              onChange={(changeEvent) => setUpdatedDeadline(changeEvent.target.value)}
+              onPointerDown={(pointerEvent) => pointerEvent.stopPropagation()}
+              className="w-full rounded-xl border border-zinc-200 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+            />
+          </div>
+
           <div className="flex gap-2">
-            <button onClick={handleUpdate} className="btn-cta text-sm px-3 py-1 h-9">
-              { translateTasks("edit")}
+            <button
+              onClick={handleUpdate}
+              onPointerDown={(pointerEvent) => pointerEvent.stopPropagation()}
+              className="btn-cta text-sm px-3 py-1 h-9"
+            >
+              {translateCommon("save")}
             </button>
-            <button onClick={() => setIsEditing(false)} className="btn-outline text-sm px-3 py-1 h-9">
+            <button
+              onClick={() => setIsEditFormOpen(false)}
+              onPointerDown={(pointerEvent) => pointerEvent.stopPropagation()}
+              className="btn-outline text-sm px-3 py-1 h-9"
+            >
               {translateCommon("cancel")}
             </button>
           </div>
@@ -110,11 +203,16 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
             </p>
           )}
           <div className="flex gap-2 mt-1">
-            <button onClick={() => setIsEditing(true)} className="btn-outline text-sm px-3 py-1 h-9">
+            <button
+              onClick={() => setIsEditFormOpen(true)}
+              onPointerDown={(pointerEvent) => pointerEvent.stopPropagation()}
+              className="btn-outline text-sm px-3 py-1 h-9"
+            >
               {translateTasks("edit")}
             </button>
             <button
               onClick={handleDelete}
+              onPointerDown={(pointerEvent) => pointerEvent.stopPropagation()}
               className="text-sm px-3 py-1 h-9 text-red-600 hover:text-red-800 transition-colors"
             >
               {translateTasks("delete")}

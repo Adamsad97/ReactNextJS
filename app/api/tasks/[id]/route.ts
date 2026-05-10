@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getAuthUser } from "@/app/lib/auth";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -25,13 +26,18 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { title, description, status, priority, deadline, position, categoryId } = await req.json();
 
-    const task = await prisma.task.updateMany({
+    const updatedTask = await prisma.task.updateMany({
       where: { id, userId: user.userId },
       data: { title, description, status, priority, deadline: deadline ? new Date(deadline) : null, position, categoryId },
     });
 
-    return NextResponse.json(task);
-  } catch {
+    revalidateTag(`tasks-${user.userId}`, "default");
+    revalidatePath("/[locale]/tasks", "page");
+    revalidatePath("/[locale]/dashboard", "page");
+
+    return NextResponse.json(updatedTask);
+  } catch (error) {
+    console.error("PUT /api/tasks/[id] error:", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }
@@ -46,8 +52,13 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       where: { id, userId: user.userId },
     });
 
+    revalidateTag(`tasks-${user.userId}`, "default");
+    revalidatePath("/[locale]/tasks", "page");
+    revalidatePath("/[locale]/dashboard", "page");
+
     return NextResponse.json({ message: "Tâche supprimée" });
-  } catch {
+  } catch (error) {
+    console.error("DELETE /api/tasks/[id] error:", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

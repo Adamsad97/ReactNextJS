@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getAuthUser } from "@/app/lib/auth";
-import { unstable_cache, revalidateTag } from "next/cache";
+import { unstable_cache, revalidateTag, revalidatePath } from "next/cache";
 
 const getCachedTasks = (userId: string) =>
   unstable_cache(
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
   try {
     const { title, description, status, priority, deadline, position, categoryId } = await req.json();
 
-    const task = await prisma.task.create({
+    const newTask = await prisma.task.create({
       data: {
         title,
         description,
@@ -45,9 +45,12 @@ export async function POST(req: NextRequest) {
     });
 
     revalidateTag(`tasks-${user.userId}`, "default");
+    revalidatePath("/[locale]/tasks", "page");
+    revalidatePath("/[locale]/dashboard", "page");
 
-    return NextResponse.json(task, { status: 201 });
-  } catch {
+    return NextResponse.json(newTask, { status: 201 });
+  } catch (error) {
+    console.error("POST /api/tasks error:", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

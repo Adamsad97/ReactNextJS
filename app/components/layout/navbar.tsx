@@ -22,7 +22,7 @@ function applyTheme(theme: "light" | "dark") {
 }
 
 const navigationItems = [
-  { href: "", key: "dashboard" },
+  { href: "/dashboard", key: "dashboard" },
   { href: "/tasks", key: "tasks" },
   { href: "/history", key: "history" },
   { href: "/settings", key: "settings" },
