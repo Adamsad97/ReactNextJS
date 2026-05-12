@@ -5,6 +5,9 @@ export default createMiddleware({
   locales,
   defaultLocale,
   localePrefix: "always",
+  // Cette option force le middleware à utiliser l'hôte du header si disponible
+  // et évite l'ajout du port interne 3000
+  localeDetection: true,
 });
 
 export const config = {
