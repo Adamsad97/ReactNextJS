@@ -176,7 +176,7 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
           {taskCategory && taskCategory.members && taskCategory.members.length > 0 && (
             <div>
               <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-                Assigner à :
+                {translateTasks("assignTo")}
               </label>
               <select
                 multiple
@@ -196,7 +196,7 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
                   <option key={member.id} value={member.id}>{member.name}</option>
                 ))}
               </select>
-              <p className="text-xs text-zinc-500">Maintenez Ctrl/Cmd pour en sélectionner plusieurs</p>
+              <p className="text-xs text-zinc-500">{translateTasks("multiSelectHint")}</p>
             </div>
           )}
 

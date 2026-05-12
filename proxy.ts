@@ -1,18 +1,12 @@
 import createMiddleware from "next-intl/middleware";
-import type { NextRequest } from "next/server";
 import { locales, defaultLocale } from "./app/i18n-languaguages/config";
 
-const intlProxy = createMiddleware({
+export default createMiddleware({
   locales,
   defaultLocale,
+  localePrefix: "always",
 });
 
-export function proxy(request: NextRequest) {
-  return intlProxy(request);
-}
-
 export const config = {
-  matcher: [
-    "/((?!api|_next|_vercel|sitemap.xml|robots.txt|.*\\..*).*)",
-  ],
+  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
 };

@@ -8,7 +8,14 @@
     "loginButton": "Se connecter",
     "registerButton": "S'inscrire",
     "noAccount": "Pas encore de compte ?",
-    "alreadyAccount": "Déjà un compte ?"
+    "alreadyAccount": "Déjà un compte ?",
+    "forgotPasswordLink": "Mot de passe oublié ?",
+    "forgotPasswordTitle": "Réinitialiser le mot de passe",
+    "forgotPasswordEmailLabel": "Entrez votre email pour recevoir un lien de réinitialisation",
+    "sendResetLink": "Envoyer le lien",
+    "resetPasswordTitle": "Nouveau mot de passe",
+    "setNewPassword": "Définir le nouveau mot de passe",
+    "backToLogin": "Retour à la connexion"
   },
   "tasks": {
     "title": "Mes tâches",
@@ -18,6 +25,13 @@
     "delete": "Supprimer",
     "noHistory": "Aucune tâche terminée ou annulée",
     "noTasks": "Aucune tâche pour le moment",
+    "selectProject": "Sélectionnez un projet pour voir ses tâches",
+    "createProjectHint": "Ou créez un nouveau projet avec le bouton",
+    "in": "dans",
+    "useButton": "Utilisez le bouton",
+    "toCreateTask": "pour créer une tâche",
+    "assignTo": "Assigner à :",
+    "multiSelectHint": "Maintenez Ctrl/Cmd pour en sélectionner plusieurs",
     "filters": {
       "ALL": "Tous"
     },

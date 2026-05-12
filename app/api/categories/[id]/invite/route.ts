@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { getAuthUser } from "@/app/lib/auth";
+import { sendMail } from "@/app/lib/mail";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -60,6 +61,21 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         categoryId: id,
         userId: userToInvite.id,
       },
+    });
+
+    // Send notification email
+    const invitationLink = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`;
+    
+    await sendMail({
+      to: email,
+      subject: `Invitation to project: ${category.name}`,
+      html: `
+        <h1>Project Invitation</h1>
+        <p>Hello ${userToInvite.name},</p>
+        <p>You have been invited to join the project <strong>${category.name}</strong> on TaskFlow.</p>
+        <p>Click the link below to view your invitations and join the project:</p>
+        <a href="${invitationLink}" style="display:inline-block;padding:10px 20px;background-color:#000;color:#fff;text-decoration:none;border-radius:5px;">View Invitations</a>
+      `,
     });
 
     return NextResponse.json({ message: "Utilisateur invité avec succès" }, { status: 200 });

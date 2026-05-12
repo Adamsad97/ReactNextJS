@@ -22,6 +22,7 @@ export function TaskList({ initialTasks }: { initialTasks: Task[] }) {
   const { tasks, setTasks } = useTask();
   const { activeCategoryId, categories } = useCategory();
   const translate = useTranslations("tasks");
+  const tProject = useTranslations("project");
   const hasInitialized = useRef(false);
 
   useEffect(() => {
@@ -46,12 +47,11 @@ export function TaskList({ initialTasks }: { initialTasks: Task[] }) {
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col items-center justify-center py-16 gap-3 text-center"
       >
-        <p className="text-2xl">📂</p>
         <p className="text-base font-medium text-zinc-700 dark:text-zinc-300">
-          Sélectionnez un projet pour voir ses tâches
+          {translate("selectProject")}
         </p>
         <p className="text-sm text-zinc-500">
-          Ou créez un nouveau projet avec le bouton <strong>+ Nouveau</strong>
+          {translate("createProjectHint")} <strong>{tProject("new")}</strong>
         </p>
       </motion.div>
     );
@@ -70,14 +70,13 @@ export function TaskList({ initialTasks }: { initialTasks: Task[] }) {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center py-12 gap-2 text-center"
+            className="flex h-40 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-200 dark:border-zinc-800"
           >
-            <p className="text-2xl">✅</p>
-            <p className="card-description">
-              {translate("noTasks")} dans <strong>{activeCategory?.name}</strong>
+            <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+              {translate("noTasks")} {translate("in")} <strong>{activeCategory?.name}</strong>
             </p>
             <p className="text-xs text-zinc-400">
-              Utilisez le bouton <strong>+ {translate("add")}</strong> pour créer une tâche
+              {translate("useButton")} <strong>+ {translate("add")}</strong> {translate("toCreateTask")}
             </p>
           </motion.div>
         ) : (

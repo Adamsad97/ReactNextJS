@@ -28,12 +28,25 @@ type CategoryContextType = {
   fetchCategories: () => Promise<void>;
 };
 
+const STORAGE_KEY = "task-flow-active-project";
 const CategoryContext = createContext<CategoryContextType | null>(null);
 
 export function CategoryProvider({ children }: { children: React.ReactNode }) {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem(STORAGE_KEY);
+  });
   const { token, isAuthenticated } = useAuth();
+
+  const handleSetActiveCategoryId = (id: string | null) => {
+    setActiveCategoryId(id);
+    if (id) {
+      localStorage.setItem(STORAGE_KEY, id);
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  };
 
   const fetchCategories = async () => {
     if (!token) return;
@@ -44,8 +57,20 @@ export function CategoryProvider({ children }: { children: React.ReactNode }) {
       if (res.ok) {
         const data = await res.json();
         setCategories(data);
-        if (data.length > 0 && !activeCategoryId) {
-          setActiveCategoryId(data[0].id);
+        
+        if (data.length > 0) {
+          const savedId = localStorage.getItem(STORAGE_KEY);
+          const projectStillExists = data.some((c: Category) => c.id === savedId);
+          
+          if (projectStillExists && savedId) {
+            setActiveCategoryId(savedId);
+          } else {
+            // Keep current if valid, otherwise fallback to first project
+            setActiveCategoryId((prev) => {
+              if (prev && data.some((c: Category) => c.id === prev)) return prev;
+              return data[0].id;
+            });
+          }
         }
       }
     } catch (error) {
@@ -70,7 +95,7 @@ export function CategoryProvider({ children }: { children: React.ReactNode }) {
   const deleteCategory = (id: string) => {
     setCategories((prev) => prev.filter((c) => c.id !== id));
     if (activeCategoryId === id) {
-      setActiveCategoryId(null);
+      handleSetActiveCategoryId(null);
     }
   };
 
@@ -83,7 +108,7 @@ export function CategoryProvider({ children }: { children: React.ReactNode }) {
         updateCategory,
         deleteCategory,
         activeCategoryId,
-        setActiveCategoryId,
+        setActiveCategoryId: handleSetActiveCategoryId,
         fetchCategories,
       }}
     >

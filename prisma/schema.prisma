@@ -37,6 +37,8 @@ model User {
   assignedTasks    Task[]     @relation("TaskAssignees")
   createdAt        DateTime   @default(now())
   projectInvitations ProjectInvitation[]
+  resetToken       String?    @unique
+  resetTokenExpires DateTime?
 }
 
 model Task {
