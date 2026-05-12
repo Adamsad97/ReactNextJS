@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTask } from "@/app/contexts/task-context";
 import { useAuth } from "@/app/contexts/auth-context";
+import { useCategory, type ProjectMember } from "@/app/contexts/category-context";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Calendar } from "lucide-react";
@@ -19,6 +20,7 @@ type Task = {
   deadline?: string;
   position: number;
   categoryId?: string;
+  assignees?: ProjectMember[];
 };
 
 const statusColors: Record<string, string> = {
@@ -38,6 +40,7 @@ const priorityColors: Record<string, string> = {
 export function TaskCard({ task, index }: { task: Task; index: number }) {
   const { deleteTask, updateTask } = useTask();
   const { token } = useAuth();
+  const { categories } = useCategory();
   const translateTasks = useTranslations("tasks");
   const translateCommon = useTranslations("common");
   const locale = useLocale();
@@ -48,6 +51,11 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
   const [updatedDeadline, setUpdatedDeadline] = useState(
     task.deadline ? new Date(task.deadline).toISOString().split("T")[0] : ""
   );
+  const [updatedAssigneeIds, setUpdatedAssigneeIds] = useState<string[]>(
+    task.assignees ? task.assignees.map((a) => a.id) : []
+  );
+
+  const taskCategory = categories.find((c) => c.id === task.categoryId);
 
   const {
     attributes: dragAttributes,
@@ -87,7 +95,7 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(updatedTaskData),
+      body: JSON.stringify({ ...updatedTaskData, assigneeIds: updatedAssigneeIds }),
     });
 
     if (res.ok) {
@@ -165,6 +173,33 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
             />
           </div>
 
+          {taskCategory && taskCategory.members && taskCategory.members.length > 0 && (
+            <div>
+              <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+                Assigner à :
+              </label>
+              <select
+                multiple
+                value={updatedAssigneeIds}
+                onChange={(changeEvent) => {
+                  const options = changeEvent.target.options;
+                  const selectedValues = [];
+                  for (let i = 0; i < options.length; i++) {
+                    if (options[i].selected) selectedValues.push(options[i].value);
+                  }
+                  setUpdatedAssigneeIds(selectedValues);
+                }}
+                onPointerDown={(pointerEvent) => pointerEvent.stopPropagation()}
+                className="w-full rounded-xl border border-zinc-200 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 h-24"
+              >
+                {taskCategory.members.map((member) => (
+                  <option key={member.id} value={member.id}>{member.name}</option>
+                ))}
+              </select>
+              <p className="text-xs text-zinc-500">Maintenez Ctrl/Cmd pour en sélectionner plusieurs</p>
+            </div>
+          )}
+
           <div className="flex gap-2">
             <button
               onClick={handleUpdate}
@@ -202,6 +237,21 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
               {new Date(task.deadline).toLocaleDateString(locale, { day: "2-digit", month: "2-digit", year: "numeric" })}
             </p>
           )}
+          
+          {task.assignees && task.assignees.length > 0 && (
+            <div className="flex -space-x-2 mt-2">
+              {task.assignees.map((assignee) => (
+                <div
+                  key={assignee.id}
+                  title={assignee.name}
+                  className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 border-2 border-white text-[10px] font-bold text-blue-700 dark:border-zinc-900 dark:bg-blue-900/50 dark:text-blue-200"
+                >
+                  {assignee.name.charAt(0).toUpperCase()}
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="flex gap-2 mt-1">
             <button
               onClick={() => setIsEditFormOpen(true)}

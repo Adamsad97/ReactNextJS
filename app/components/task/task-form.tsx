@@ -5,13 +5,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { taskSchema, type TaskFormData } from "@/app/lib/validations/task.schema";
 import { useTask } from "@/app/contexts/task-context";
 import { useAuth } from "@/app/contexts/auth-context";
+import { useCategory } from "@/app/contexts/category-context";
 import { useTranslations } from "next-intl";
 
 export function TaskForm({ onClose }: { onClose: () => void }) {
   const { addTask } = useTask();
   const { token } = useAuth();
+  const { categories, activeCategoryId } = useCategory();
   const translateTasks = useTranslations("tasks");
   const translateCommon = useTranslations("common");
+
+  const activeCategory = categories.find((c) => c.id === activeCategoryId);
 
   const {
     register,
@@ -23,13 +27,18 @@ export function TaskForm({ onClose }: { onClose: () => void }) {
   });
 
   const onSubmit = async (data: TaskFormData) => {
+    const payload = {
+      ...data,
+      categoryId: activeCategoryId || undefined,
+    };
+
     const res = await fetch("/api/tasks", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
 
     if (res.ok) {
@@ -77,6 +86,18 @@ export function TaskForm({ onClose }: { onClose: () => void }) {
         <label>{translateTasks("form.deadline")}</label>
         <input type="date" {...register("deadline")} />
       </div>
+
+      {activeCategory && activeCategory.members && activeCategory.members.length > 0 && (
+        <div>
+          <label>Assigner à :</label>
+          <select multiple {...register("assigneeIds")} className="w-full rounded-xl border border-zinc-200 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900 h-24">
+            {activeCategory.members.map((member) => (
+              <option key={member.id} value={member.id}>{member.name}</option>
+            ))}
+          </select>
+          <p className="text-xs text-zinc-500">Maintenez Ctrl/Cmd pour en sélectionner plusieurs</p>
+        </div>
+      )}
 
       <button type="submit" disabled={isSubmitting}>
         {isSubmitting ? translateCommon("loading") : translateTasks("form.create")}

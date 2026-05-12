@@ -15,6 +15,7 @@ export const taskSchema = z.object({
       return selectedDate >= today;
     }, "La deadline ne peut pas être dans le passé"),
   categoryId: z.string().optional(),
+  assigneeIds: z.array(z.string()).optional(),
 });
 
 export type TaskFormData = z.infer<typeof taskSchema>;

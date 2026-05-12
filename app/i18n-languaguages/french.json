@@ -12,6 +12,7 @@
   },
   "tasks": {
     "title": "Mes tâches",
+    "project": "Projet",
     "add": "Ajouter une tâche",
     "edit": "Modifier",
     "delete": "Supprimer",
@@ -67,5 +68,27 @@
     "settings": "Paramètres",
     "logout": "Déconnexion",
     "historyPlaceholder": "L'historique des actions et des changements apparaîtra ici"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "Aucune notification",
+    "inviteText1": "vous a invité à rejoindre le projet",
+    "accept": "Accepter",
+    "decline": "Décliner"
+  },
+  "project": {
+    "label": "Projet :",
+    "namePlaceholder": "Nom du projet",
+    "selectPlaceholder": "Sélectionner un projet",
+    "new": "+ Nouveau",
+    "invite": "Inviter",
+    "selectFirst": "Sélectionnez un projet d'abord",
+    "inviteTitle": "Inviter au projet",
+    "emailLabel": "Email de l'utilisateur",
+    "emailPlaceholder": "exemple@email.com",
+    "sendInvite": "Envoyer l'invitation",
+    "inviteSuccess": "Utilisateur invité avec succès",
+    "inviteError": "Une erreur est survenue",
+    "networkError": "Erreur de connexion au serveur"
   }
 }

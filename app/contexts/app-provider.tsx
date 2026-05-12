@@ -7,14 +7,17 @@ export const metadata: Metadata = {
 };
 
 import { AuthProvider } from "./auth-context";
+import { CategoryProvider } from "./category-context";
 import { TaskProvider } from "./task-context";
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
-      <TaskProvider>
-        {children}
-      </TaskProvider>
+      <CategoryProvider>
+        <TaskProvider>
+          {children}
+        </TaskProvider>
+      </CategoryProvider>
     </AuthProvider>
   );
 }

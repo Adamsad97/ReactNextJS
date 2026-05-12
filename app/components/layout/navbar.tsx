@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { locales, type Locale, localeNames } from "@/app/i18n-languaguages/config";
 import { useAuth } from "@/app/contexts/auth-context";
+import { Notifications } from "./notifications";
 
 const THEME_STORAGE_KEY = "task-flow-theme";
 
@@ -90,6 +91,7 @@ export function Navbar() {
             <div className="flex items-center gap-2 md:hidden">
               {mounted && isAuthenticated && (
                 <>
+                  <Notifications />
                   <span className="text-sm text-zinc-600 dark:text-zinc-400">
                     {user?.name}
                   </span>
@@ -147,6 +149,7 @@ export function Navbar() {
           <div className="locale-toggle-group">
             {mounted && isAuthenticated && (
               <>
+                <Notifications />
                 <span className="navbar-user-name">
                   {user?.name}
                 </span>

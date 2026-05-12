@@ -12,6 +12,7 @@
   },
   "tasks": {
     "title": "My tasks",
+    "project": "Project",
     "add": "Add a task",
     "edit": "Edit",
     "delete": "Delete",
@@ -67,5 +68,27 @@
     "historyPlaceholder": "The history of actions and changes will appear here",
     "settings": "Settings",
     "logout": "Logout"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications",
+    "inviteText1": "invited you to join the project",
+    "accept": "Accept",
+    "decline": "Decline"
+  },
+  "project": {
+    "label": "Project :",
+    "namePlaceholder": "Project name",
+    "selectPlaceholder": "Select a project",
+    "new": "+ New",
+    "invite": "Invite",
+    "selectFirst": "Select a project first",
+    "inviteTitle": "Invite to project",
+    "emailLabel": "User email",
+    "emailPlaceholder": "example@email.com",
+    "sendInvite": "Send invitation",
+    "inviteSuccess": "User invited successfully",
+    "inviteError": "An error occurred",
+    "networkError": "Server connection error"
   }
 }

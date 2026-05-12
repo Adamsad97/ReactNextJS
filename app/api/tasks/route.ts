@@ -7,8 +7,17 @@ const getCachedTasks = (userId: string) =>
   unstable_cache(
     async () => {
       return await prisma.task.findMany({
-        where: { userId },
-        include: { category: true },
+        where: {
+          OR: [
+            { userId },
+            { assignees: { some: { id: userId } } },
+            { category: { members: { some: { id: userId } } } }
+          ],
+        },
+        include: { 
+          category: true,
+          assignees: { select: { id: true, name: true, email: true } }
+        },
         orderBy: { position: "asc" },
       });
     },
@@ -29,7 +38,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   try {
-    const { title, description, status, priority, deadline, position, categoryId } = await req.json();
+    const { title, description, status, priority, deadline, position, categoryId, assigneeIds } = await req.json();
 
     const newTask = await prisma.task.create({
       data: {
@@ -41,7 +50,13 @@ export async function POST(req: NextRequest) {
         position: position ?? 0,
         userId: user.userId,
         categoryId,
+        assignees: {
+          connect: assigneeIds ? assigneeIds.map((id: string) => ({ id })) : [],
+        },
       },
+      include: {
+        assignees: { select: { id: true, name: true, email: true } }
+      }
     });
 
     revalidateTag(`tasks-${user.userId}`, "default");

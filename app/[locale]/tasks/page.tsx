@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
-import { getTranslations } from "next-intl/server";
 import { TaskList } from "@/app/components/task/task-list";
-import { TaskFormModal } from "@/app/components/task/task-form-modal";
+import { ProjectManager } from "@/app/components/task/project-manager";
+import { ProjectHeader } from "@/app/components/task/project-header";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -22,16 +22,17 @@ async function getTasks(token: string) {
 }
 
 export default async function TasksPage() {
-  const t = await getTranslations("tasks");
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value ?? "";
   const tasks = await getTasks(token);
 
   return (
-    <section className="card">
-      <p className="card-label">{t("title")}</p>
-      <TaskFormModal />
-      <TaskList initialTasks={tasks} />
-    </section>
+    <div className="flex flex-col w-full gap-6">
+      <ProjectManager />
+      <section className="card">
+        <ProjectHeader />
+        <TaskList initialTasks={tasks} />
+      </section>
+    </div>
   );
-}
+}

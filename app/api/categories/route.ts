@@ -7,8 +7,16 @@ export async function GET(req: NextRequest) {
   if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const categories = await prisma.category.findMany({
-    where: { userId: user.userId },
-    include: { tasks: true },
+    where: {
+      OR: [
+        { userId: user.userId },
+        { members: { some: { id: user.userId } } },
+      ],
+    },
+    include: {
+      tasks: true,
+      members: { select: { id: true, name: true, email: true } },
+    },
   });
 
   return NextResponse.json(categories);
@@ -26,6 +34,10 @@ export async function POST(req: NextRequest) {
         name,
         color,
         userId: user.userId,
+        members: { connect: { id: user.userId } },
+      },
+      include: {
+        members: { select: { id: true, name: true, email: true } },
       },
     });
 
