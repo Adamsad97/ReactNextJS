@@ -1,39 +1,68 @@
-0. npx prisma init : A faire que lorsque l'on n'a pas prisma installé (Donc cette commande, vous n'en avez pas besoin ici: Commerncez à partir de 1.)
+# TaskFlow - Gestion de tâches collaborative
 
-## Installation et mise en place des dépendances
+## 🚀 Démarrage Rapide
 
-1. cd .\ReactNextJS
-2. npm install
-3. .env (à la racine du projet)
-   DATABASE_URL= A changer après l'exécution de: npx create-db
+### 1. Pré-requis
+Créez un fichier `.env` à la racine du projet sur le modèle suivant :
+```env
+DATABASE_URL="postgresql://taskflow:taskflow_secret@localhost:5433/taskflow"
+JWT_SECRET="votre_secret_jwt_tres_long"
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+RESEND_API_KEY="votre_cle_resend"
+EMAIL_FROM="votre_email_verifie"
+```
 
-   JWT_SECRET="d6840975b83db1c3cc4451555aa1ba77d3076f02a148c4c3d5a9a492314b1c48b0b522dbed8d81663b71effa69f288775c5c377c554f45815510208c8cb95173"
+---
 
-   NEXT_PUBLIC_APP_URL="http://localhost:3000"
+### 🐳 Via Docker (Recommandé)
 
-4. npx create-db
-5. Mettre à jour DATABASE_URL dans .env
-6. npx prisma migrate dev --name init
-7. npx prisma generate
+1. **Lancer les services (Base de données, Redis, App) :**
+   ```bash
+   docker-compose up -d --build
+   ```
+2. **Insérer les données de test (Utilisateurs, Projets, Tâches) :**
+   ```bash
+   docker exec -it task-flow-app npx tsx app/scripts/seed.ts
+   ```
+3. **Accéder à l'application :** `http://localhost:3000`
 
-## Demarrage mode dev
+---
 
-npm run dev
+### 📦 Via NPM (Développement local)
 
-## Demarrage mode prod
+1. **Installer les dépendances :**
+   ```bash
+   npm install
+   ```
+2. **Lancer la base de données (si Docker installé) :**
+   ```bash
+   docker-compose up -d postgres redis
+   ```
+3. **Appliquer les migrations et générer Prisma :**
+   ```bash
+   npx prisma migrate dev
+   npx prisma generate
+   ```
+4. **Insérer les utilisateurs de test :**
+   ```bash
+   npx tsx app/scripts/seed.ts
+   ```
+5. **Lancer le serveur de développement :**
+   ```bash
+   npm run dev
+   ```
 
-npm run build
-puis
-npm start
+---
 
-## Démarrage via Docker
+### 🛠️ Commandes Utiles
 
-docker-compose up -d
+- **Arrêter Docker :** `docker-compose down`
+- **Réinitialiser la DB :** `npx prisma migrate reset`
+- **Accéder à Prisma Studio :** `npx prisma studio`
 
-## Build
+---
 
-docker compose up --build
-
-## Arrêt des services
-
-docker compose down
+### 👥 Comptes de Test (via Seed)
+- **Alice :** `alice@taskflow.dev` / `password123` (Propriétaire)
+- **Bob :** `bob@taskflow.dev` / `password123` (Membre)
+- **Carla :** `carla@taskflow.dev` / `password123` (Membre)
